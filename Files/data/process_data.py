@@ -4,14 +4,47 @@ from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
     
+    """
+    This function converts the .csv files into a Pandas DataFrame
+
+    Parameters
+    ----------
+    messages_filepath : str
+        path to the .csv file containing the messages
+    categories_filepath : str
+        path to the .csv file containing the categories
+
+    Returns
+    -------
+    pandas DataFrame
+        returns the two .csv files merges on the 'id' column
+    """
+    
     #Load Datasets
-    messages = pd.read_csv(messages_filepath, usecols = ['id','message','genre'])
+    messages = pd.read_csv(messages_filepath,
+                           usecols = ['id','message','genre'])
     categories = pd.read_csv(categories_filepath, sep = ",")
     
     #Return merged Dataset
     return pd.merge(messages, categories)
     
 def clean_data(df):
+    
+    """
+    This function preprocesses the DataFrame obtained from load_data().
+    It will break the categories column into 36 individual target columns.
+
+    Parameters
+    ----------
+    df : pandas DataFrame
+        DataFrame obtained from load_data()
+
+    Returns
+    -------
+    pandas DataFrame
+        returns another DataFrame with 36 individual target columns.
+
+    """
     
     # Create a dataframe of the 36 individual category columns
     cat_index = df["id"] #index
@@ -37,7 +70,22 @@ def clean_data(df):
     return pd.merge(messages, categories).drop_duplicates()
 
 def save_data(df, database_filename):
-    engine = create_engine('sqlite:///DisasterResponse.db')
+    """
+    This function saves a pandas DataFrame into a SQL database.
+
+    Parameters
+    ----------
+    df : pandas DataFrame
+        DataFrame to be saved into the SQL database
+    database_filename : str
+         Path to SQL Database
+
+    Returns
+    -------
+    None.
+
+    """
+    engine = create_engine(f'sqlite:///{database_filename}')
     df.to_sql('disaster_data', engine, index=False)  
 
 def main():
