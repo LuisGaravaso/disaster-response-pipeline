@@ -16,26 +16,37 @@ from nltk.stem.wordnet import WordNetLemmatizer
 
 
 def load_data(database_filepath):
+    
+    #Read data from Database
     engine = create_engine(f'sqlite:///{database_filepath}')
     df = pd.read_sql('disaster_data',engine)
     
+    # Break data into X and Y datasets
     X = df['message']
     Y = df.drop(['id', 'message'], axis = 1)
     
+    # Some values in the 'related' column are
+    # marked as 2 where they should be 0
+    # The next two lines fix this problem
+    bol = Y['related'] == 2
+    Y.loc[bol,'related'] = 0
+    
+    #Return 
     return X, Y.astype(np.uint8), Y.columns
 
 def tokenize(text):
     
+    #Get StopWords and Lemmatizer 
     stop_words = stopwords.words('english')
     lemmatizer = WordNetLemmatizer()
     
-    # normalize case and remove punctuation
+    # Normalize case and remove punctuation
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     
-    # tokenize text
+    # Tokenize text
     tokens = word_tokenize(text)
     
-    # lemmatize andremove stop words
+    # Lemmatize and remove Stop Words
     tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
 
     return tokens
