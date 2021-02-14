@@ -6,6 +6,7 @@ import re
 from sqlalchemy import create_engine
 from collections import defaultdict
 import pickle
+from warnings import filterwarnings
 
 #Sklearn
 from sklearn.pipeline import Pipeline
@@ -21,6 +22,8 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 
+nltk.download(['punkt','stopwords','wordnet'])
+filterwarnings('ignore')
 
 def load_data(database_filepath):
     
@@ -31,6 +34,7 @@ def load_data(database_filepath):
     # Break data into X and Y datasets
     X = df['message']
     Y = df.drop(['id', 'message'], axis = 1)
+    Y = Y.astype(np.uint8)
     
     # Some values in the 'related' column are
     # marked as 2 where they should be 0
@@ -39,7 +43,7 @@ def load_data(database_filepath):
     Y.loc[bol,'related'] = 0
     
     #Return 
-    return X, Y.astype(np.uint8), Y.columns
+    return X, Y, Y.columns
 
 def tokenize(text):
     
@@ -80,12 +84,14 @@ def evaluate_model(model, X_test, Y_test, category_names):
     
     Y_pred = model.predict(X_test) #Predict
     
-    Acc = []
-    Prc = []
-    Rec = []
+    #List to save Evaluation Metrics' Results
+    Acc = [] #Accuracy
+    Prc = [] #Precision
+    Rec = [] #Recall
     
+    #Evaluate every column
     for ind, col in enumerate(Y_test.columns):
-    
+
         y_true = Y_test[col]
         y_pred = Y_pred[:,ind] 
         
@@ -98,9 +104,11 @@ def evaluate_model(model, X_test, Y_test, category_names):
         Prc.append(prc)
         Rec.append(rec)
     
+    #Create dataset to save evaluation results into a .csv file
     data = np.c_[Acc, Prc, Rec]
-    Eval = pd.DataFrame(data, index = category_names)
-    Eval.to_csv('evaluation_results.csv', index = False)
+    Eval = pd.DataFrame(data, index = category_names,
+                        columns = ['Accuracy','Precision','Recall'])
+    Eval.to_csv('evaluation_results.csv')
 
 def save_model(model, model_filepath):
     
