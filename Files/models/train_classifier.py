@@ -4,8 +4,13 @@ import pandas as pd
 import numpy as np
 import re
 from sqlalchemy import create_engine
+from collections import defaultdict
 
 #Sklearn
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import train_test_split
 
 # NLP 
@@ -53,8 +58,21 @@ def tokenize(text):
 
 
 def build_model():
-    pass
+    
+    #Steps of the Pipeline
+    steps = defaultdict(list)
+    steps["count"] = CountVectorizer(tokenizer = tokenize) #
+    steps["tfidf"] = TfidfTransformer(norm='l2')
+    
+    ranforest = RandomForestClassifier(n_estimators='50',
+                                       criterion='gini') #RandomForest
+    clf = MultiOutputClassifier(ranforest, n_jobs = -1) #Make MultiOutput CLF
+    steps["Classifier"] = clf #Add classifier to the end of the Pipeline
+    steps = list(steps.items()) #Convert Steps to list
+    
+    pipeline = Pipeline(steps) #Make Pipeline 
 
+    return pipeline     
 
 def evaluate_model(model, X_test, Y_test, category_names):
     pass
