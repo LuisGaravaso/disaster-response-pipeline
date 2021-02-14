@@ -1,9 +1,12 @@
 import json
 import plotly
 import pandas as pd
+import re
 
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
 
 from flask import Flask
 from flask import render_template, request, jsonify
@@ -15,22 +18,28 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
-    tokens = word_tokenize(text)
+    
+    #Get StopWords and Lemmatizer 
+    stop_words = stopwords.words('english')
     lemmatizer = WordNetLemmatizer()
+    
+    # Normalize case and remove punctuation
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
+    
+    # Tokenize text
+    tokens = word_tokenize(text)
+    
+    # Lemmatize and remove Stop Words
+    tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
 
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
-    return clean_tokens
+    return tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('disaster_data', engine)
 
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
