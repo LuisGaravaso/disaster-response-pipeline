@@ -33,7 +33,7 @@ def load_data(database_filepath):
     
     # Break data into X and Y datasets
     X = df['message']
-    Y = df.drop(['id', 'message'], axis = 1)
+    Y = df.drop(['id', 'message', 'genre'], axis = 1)
     Y = Y.astype(np.uint8)
     
     # Some values in the 'related' column are

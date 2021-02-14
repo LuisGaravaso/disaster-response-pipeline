@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 def load_data(messages_filepath, categories_filepath):
     
     #Load Datasets
-    messages = pd.read_csv(messages_filepath, usecols = ['id','message'])
+    messages = pd.read_csv(messages_filepath, usecols = ['id','message','genre'])
     categories = pd.read_csv(categories_filepath, sep = ",")
     
     #Return merged Dataset
@@ -15,7 +15,7 @@ def clean_data(df):
     
     # Create a dataframe of the 36 individual category columns
     cat_index = df["id"] #index
-    messages = df.drop('categories', axis = 1) #message
+    messages = df.drop(['categories'], axis = 1) #message
     cat_data = df["categories"].str.split(";", expand = True) #data
     
     #Since Data looks like:
