@@ -13,6 +13,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 # NLP 
 import nltk
@@ -62,8 +63,8 @@ def build_model():
     
     #Steps of the Pipeline
     steps = defaultdict(list)
-    steps["count"] = CountVectorizer(tokenizer = tokenize) #
-    steps["tfidf"] = TfidfTransformer(norm='l2')
+    steps["count"] = CountVectorizer(tokenizer = tokenize) 
+    steps["tfidf"] = TfidfTransformer(norm='l1')
     
     ranforest = RandomForestClassifier(n_estimators=50,
                                        criterion='gini') #RandomForest
@@ -76,8 +77,30 @@ def build_model():
     return pipeline     
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
-
+    
+    Y_pred = model.predict(X_test) #Predict
+    
+    Acc = []
+    Prc = []
+    Rec = []
+    
+    for ind, col in enumerate(Y_test.columns):
+    
+        y_true = Y_test[col]
+        y_pred = Y_pred[:,ind] 
+        
+        #Metrics 
+        acc = accuracy_score(y_true, y_pred) #Accuracy
+        prc = precision_score(y_true, y_pred) #Precision
+        rec = recall_score(y_true, y_pred) #Recall
+        
+        Acc.append(acc)
+        Prc.append(prc)
+        Rec.append(rec)
+    
+    data = np.c_[Acc, Prc, Rec]
+    Eval = pd.DataFrame(data, index = category_names)
+    Eval.to_csv('evaluation_results.csv', index = False)
 
 def save_model(model, model_filepath):
     
