@@ -11,7 +11,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-from sklearn.externals import joblib
+import pickle
 from sqlalchemy import create_engine
 
 
@@ -39,8 +39,8 @@ engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('disaster_data', engine)
 
 # load model
-model = joblib.load("../models/classifier.pkl")
-
+with open("../models/classifier.pkl", 'rb') as model: 
+    model = pickle.load(model)
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
