@@ -5,6 +5,7 @@ import numpy as np
 import re
 from sqlalchemy import create_engine
 from collections import defaultdict
+import pickle
 
 #Sklearn
 from sklearn.pipeline import Pipeline
@@ -64,7 +65,7 @@ def build_model():
     steps["count"] = CountVectorizer(tokenizer = tokenize) #
     steps["tfidf"] = TfidfTransformer(norm='l2')
     
-    ranforest = RandomForestClassifier(n_estimators='50',
+    ranforest = RandomForestClassifier(n_estimators=50,
                                        criterion='gini') #RandomForest
     clf = MultiOutputClassifier(ranforest, n_jobs = -1) #Make MultiOutput CLF
     steps["Classifier"] = clf #Add classifier to the end of the Pipeline
@@ -79,7 +80,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    pass
+    
+    with open(model_filepath, 'wb') as file:
+        pickle.dump(model, file)
 
 
 def main():
