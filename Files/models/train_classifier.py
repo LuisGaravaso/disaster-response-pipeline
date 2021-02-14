@@ -1,6 +1,19 @@
+# Data
 import sys
 import pandas as pd
+import numpy as np
+import re
 from sqlalchemy import create_engine
+
+#Sklearn
+from sklearn.model_selection import train_test_split
+
+# NLP 
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+
 
 def load_data(database_filepath):
     engine = create_engine(f'sqlite:///{database_filepath}')
@@ -9,10 +22,23 @@ def load_data(database_filepath):
     X = df['message']
     Y = df.drop(['id', 'message'], axis = 1)
     
-    return X, Y, Y.columns
+    return X, Y.astype(np.uint8), Y.columns
 
 def tokenize(text):
-    pass
+    
+    stop_words = stopwords.words('english')
+    lemmatizer = WordNetLemmatizer()
+    
+    # normalize case and remove punctuation
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
+    
+    # tokenize text
+    tokens = word_tokenize(text)
+    
+    # lemmatize andremove stop words
+    tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
+
+    return tokens
 
 
 def build_model():
