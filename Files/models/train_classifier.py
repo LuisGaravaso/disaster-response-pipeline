@@ -1,9 +1,15 @@
 import sys
-
+import pandas as pd
+from sqlalchemy import create_engine
 
 def load_data(database_filepath):
-    pass
-
+    engine = create_engine(f'sqlite:///{database_filepath}')
+    df = pd.read_sql('disaster_data',engine)
+    
+    X = df['message']
+    Y = df.drop(['id', 'message'], axis = 1)
+    
+    return X, Y, Y.columns
 
 def tokenize(text):
     pass
