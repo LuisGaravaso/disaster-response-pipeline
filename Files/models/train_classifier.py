@@ -18,7 +18,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 # NLP 
 import nltk
-from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 
@@ -26,7 +26,23 @@ nltk.download(['punkt','stopwords','wordnet'])
 filterwarnings('ignore')
 
 def load_data(database_filepath):
-    
+    """
+    Load data from a SQL Database.
+
+    Parameters
+    ----------
+    database_filepath : str
+        Path to SQL DataBase
+
+    Returns
+    -------
+    X : pandas DataFrame
+        Messages DataFrame
+    Y : pandas DataFrame
+        Targets DataFrame
+    Y.columns:
+        Categories' names
+    """
     #Read data from Database
     engine = create_engine(f'sqlite:///{database_filepath}')
     df = pd.read_sql('disaster_data',engine)
@@ -46,7 +62,23 @@ def load_data(database_filepath):
     return X, Y, Y.columns
 
 def tokenize(text):
+    """
+    Break text into tokens.
     
+    1. The case is normalizes and punctuation is removed
+    2. The text is then broken into words.
+    3. Finally, the words are converted by the WordNetLemmatizer()
+
+    Parameters
+    ----------
+    text : str
+        Message to tokenize
+
+    Returns
+    -------
+    tokens : list
+        List of tokens
+    """
     #Get StopWords and Lemmatizer 
     stop_words = stopwords.words('english')
     lemmatizer = WordNetLemmatizer()
@@ -62,9 +94,18 @@ def tokenize(text):
 
     return tokens
 
-
 def build_model():
-    
+    """
+    Create Model Pipeline.
+
+    Returns
+    -------
+    pipeline : MultiOutputClassifier Pipeline 
+        Contains:
+            1. CountVectorizer with tokenize
+            2. TfIdfTransformer
+            3. RandomForest Classifiers
+    """
     #Steps of the Pipeline
     steps = defaultdict(list)
     steps["count"] = CountVectorizer(tokenizer = tokenize) 
@@ -81,7 +122,27 @@ def build_model():
     return pipeline     
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate Model's accuracy, precision and recall.
     
+    Saves a .csv file called 'evaluation_results.csv' containing
+    model's performance according to the metrics used.
+    
+    Parameters
+    ----------
+    model : scikit-learn Pipeline
+        MultiOutput Model to be evaluated
+    X_test : pandas DataFrame
+        Test values
+    Y_test : pandas DataFrame
+        Test targets
+    category_names : list
+        Categories' names
+
+    Returns
+    -------
+    None.
+    """
     Y_pred = model.predict(X_test) #Predict
     
     #List to save Evaluation Metrics' Results
@@ -111,7 +172,21 @@ def evaluate_model(model, X_test, Y_test, category_names):
     Eval.to_csv('evaluation_results.csv')
 
 def save_model(model, model_filepath):
-    
+    """
+    Serialize the model into a .pkl file.
+
+    Parameters
+    ----------
+    model : scikit-learn Pipeline
+        MultiOutput Model to be evaluated
+    model_filepath : str
+        Path to serialize the model.
+        Must end with .pkl
+
+    Returns
+    -------
+    None.
+    """
     with open(model_filepath, 'wb') as file:
         pickle.dump(model, file)
 
