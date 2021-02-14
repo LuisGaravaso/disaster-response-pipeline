@@ -37,8 +37,8 @@ def clean_data(df):
     return pd.merge(messages, categories).drop_duplicates()
 
 def save_data(df, database_filename):
-    pass  
-
+    engine = create_engine('sqlite:///DisasterResponse.db')
+    df.to_sql('disaster_data', engine, index=False)  
 
 def main():
     if len(sys.argv) == 4:
