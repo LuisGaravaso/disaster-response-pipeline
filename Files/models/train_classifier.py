@@ -122,12 +122,12 @@ def build_model():
     #GridSearch
     #I'll leave this commented since it takes a lot of time to find
     #the best parameters
-    #params = {'Classifier__estimator__n_estimators': [100,200],
-    #          'Classifier__estimator__criterion': ['gini','entropy'],
-    #          'tfidf__norm': ['l1','l2']}
-    #
-    #pipeline = GridSearchCV(estimator = Pipeline, param_grid=params,
-    #                        cv = 3, refit = True)
+    params = {'Classifier__estimator__n_estimators': [100,200],
+              'Classifier__estimator__criterion': ['gini','entropy'],
+              'tfidf__norm': ['l1','l2']}
+    
+    pipeline = GridSearchCV(estimator = pipeline, param_grid=params,
+                            cv = 3, refit = True, n_jobs = -1)
 
     return pipeline     
 
