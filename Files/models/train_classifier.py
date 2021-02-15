@@ -14,7 +14,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score
 
 # NLP 
 import nltk
@@ -131,7 +131,7 @@ def build_model():
 
 def evaluate_model(model, X_test, Y_test, category_names):
     """
-    Evaluate Model's accuracy, precision and recall.
+    Evaluate Model's accuracy, precision, recall and F1-score.
     
     Saves a .csv file called 'evaluation_results.csv' containing
     model's performance according to the metrics used.
@@ -157,6 +157,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
     Acc = [] #Accuracy
     Prc = [] #Precision
     Rec = [] #Recall
+    F1 = [] #F1-Score
     
     #Evaluate every column
     for ind, col in enumerate(Y_test.columns):
@@ -168,15 +169,17 @@ def evaluate_model(model, X_test, Y_test, category_names):
         acc = accuracy_score(y_true, y_pred) #Accuracy
         prc = precision_score(y_true, y_pred) #Precision
         rec = recall_score(y_true, y_pred) #Recall
+        f1 = f1_score(y_true, y_pred) #F1-Score
         
         Acc.append(acc)
         Prc.append(prc)
         Rec.append(rec)
-    
+        F1.append(f1)
+        
     #Create dataset to save evaluation results into a .csv file
-    data = np.c_[Acc, Prc, Rec]
+    data = np.c_[Acc, Prc, Rec, F1]
     Eval = pd.DataFrame(data, index = category_names,
-                        columns = ['Accuracy','Precision','Recall'])
+                        columns = ['Accuracy','Precision','Recall', "F1-Score"])
     Eval.to_csv('evaluation_results.csv')
 
 def save_model(model, model_filepath):
