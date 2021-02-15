@@ -47,7 +47,7 @@ Once you clone the repo, you'll get the following items:
 
 The `Files` folder contains the following `folders`:
 
-* `data`: contains the data and the `etl` file
+* `data`: contains the data and the `etl` file named `process_data.py`
 * `models`: contains the `train_classifier.py` file, responsible for training, evaluating and saving a *Machine Learning* model. \
   **NOTE**: I used a `RandomForestClassifier` from `scikit-learn`, but feel free to try another one.
 
@@ -55,7 +55,7 @@ The `Files` folder contains the following `folders`:
 
 ## Usage
 
-1. Run the following commands in the project's root directory to set up your database and model.
+1. Run the following commands in the `Files` directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database
         `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
@@ -63,7 +63,7 @@ The `Files` folder contains the following `folders`:
         `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
 
 2. Run the following command in the app's directory to run your web app.
-    `python run.py`
+    `python app/run.py`
 
 3. Go to http://localhost:3001/
 
