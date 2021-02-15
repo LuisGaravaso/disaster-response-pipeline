@@ -126,7 +126,8 @@ def build_model():
     #          'Classifier__estimator__criterion': ['gini','entropy'],
     #          'tfidf__norm': ['l1','l2']}
     #
-    #pipeline = GridSearchCV(estimator = Pipeline, param_grid=params)
+    #pipeline = GridSearchCV(estimator = Pipeline, param_grid=params,
+    #                        cv = 3, refit = True)
 
     return pipeline     
 
