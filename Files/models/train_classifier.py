@@ -52,12 +52,6 @@ def load_data(database_filepath):
     Y = df.drop(['id', 'message', 'genre'], axis = 1)
     Y = Y.astype(np.uint8)
     
-    # Some values in the 'related' column are
-    # marked as 2 where they should be 0
-    # The next two lines fix this problem
-    bol = Y['related'] == 2
-    Y.loc[bol,'related'] = 0
-    
     #Return 
     return X, Y, Y.columns
 

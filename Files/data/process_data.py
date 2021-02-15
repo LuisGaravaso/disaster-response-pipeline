@@ -63,6 +63,15 @@ def clean_data(df):
         # set each value to be the last character of the string
         cat_data[column] = cat_data[column].str.split("-",expand = True)[1]
     
+    #Convert from str to integer
+    cat_data = cat_data.astype(np.uint8)
+    
+    # Some values in the 'related' column are
+    # marked as 2 where they should be 0
+    # The next two lines fix this problem
+    bol = cat_data['related'] == 2
+    cat_data.loc[bol,'related'] = 0
+    
     #Recreate 'categories' DataFrame with proper index 
     categories = cat_data.set_index(cat_index).reset_index()
 
