@@ -1,6 +1,10 @@
 # disaster-response-pipeline
-This repository is part of Udacity's Data Science Nanodegree Course. \
-Its goal is too use ETL and NLP techniques to construct a Disaster Response Pipeline.
+*This repository is part of [Udacity's Data Science Nanodegree Course](https://www.udacity.com/course/data-scientist-nanodegree--nd025).*
+
+
+When a disaster occurs, millions of messages are sent via social media or directly to response teams, such as firefighters, hospitals, and police stations.  
+These teams often have a low capacity for filtering and pulling out the most important ones to come up with a proper response. \
+Thus, this repository's goal is to use ETL and NLP techniques to construct a tool that will help response teams against these bottlenecks, the Disaster Response Pipeline.
 
 ## Table of contents
 * [Technologies](#Technologies)
