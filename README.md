@@ -3,7 +3,7 @@ This repository is part of Udacity's Data Science Nanodegree Course. \
 Its goal is too use ETL and NLP techniques to construct a Disaster Response Pipeline.
 
 ## Table of contents
-* [Technologies]($Technologies)
+* [Technologies](#Technologies)
 * [Installation](#Installation)
 * [Files](#Files)
 * [Usage](#Usage)
