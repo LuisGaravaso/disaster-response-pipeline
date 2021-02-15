@@ -111,7 +111,8 @@ def build_model():
     steps["count"] = CountVectorizer(tokenizer = tokenize) 
     steps["tfidf"] = TfidfTransformer(norm='l1')
     
-    ranforest = RandomForestClassifier() #RandomForest
+    ranforest = RandomForestClassifier(n_estimators=100,
+                                       criterion='gini') #RandomForest
     clf = MultiOutputClassifier(ranforest, n_jobs = -1) #Make MultiOutput CLF
     steps["Classifier"] = clf #Add classifier to the end of the Pipeline
     steps = list(steps.items()) #Convert Steps to list
