@@ -121,7 +121,7 @@ def build_model():
               'tfidf__norm': ['l1','l2']}
     
     pipeline = GridSearchCV(estimator = pipeline, param_grid=params,
-                            cv = 3, refit = True, n_jobs = -1)
+                            cv = 3, refit = True)
 
     return pipeline     
 
