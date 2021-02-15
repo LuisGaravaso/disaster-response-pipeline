@@ -14,6 +14,7 @@ from plotly.graph_objs import Bar
 import pickle
 from sqlalchemy import create_engine
 
+from collections import Counter
 
 app = Flask(__name__)
 
@@ -49,8 +50,20 @@ def index():
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
+    genre_counts = df['genre'].value_counts()
     genre_names = list(genre_counts.index)
+    
+    #most frequent words
+    text = " ".join(df["message"]) #Make a big text string
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower()) #Remove punctuation
+    
+    words = text.split(" ") #List of words
+    #Remove Stop Words
+    stop = stopwords.words('english') 
+    words = [word for word in words if (word not in stop) and (word != "")]
+    WordCount = Counter(words).most_common(20) #20 most common words
+    word_labels, word_counts = list(zip(*WordCount)) #labels and counts
+    
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -72,7 +85,32 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        
+        {
+            'data': [
+                Bar(
+                    x=word_counts,
+                    y=word_labels,
+                    orientation='h',
+                    marker=dict(color = word_counts,
+                                colorscale='viridis'),
+                )
+            ],
+
+            'layout': {
+                'title': '20 Most Frequent Words',
+                'yaxis': {
+                    'title': "Word"
+                },
+                'xaxis': {
+                    'title': "Count"
+                },
+                'height':600,
+                'width':1200
+            }
         }
+        
     ]
     
     # encode plotly graphs in JSON
@@ -91,7 +129,8 @@ def go():
 
     # use model to predict classification for query
     classification_labels = model.predict([query])[0]
-    classification_results = dict(zip(df.columns[4:], classification_labels))
+    print(df.columns)
+    classification_results = dict(zip(df.columns[3:], classification_labels))
 
     # This will render the go.html Please see that file. 
     return render_template(
