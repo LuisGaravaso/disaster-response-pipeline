@@ -13,7 +13,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 # NLP 
@@ -111,13 +111,21 @@ def build_model():
     steps["count"] = CountVectorizer(tokenizer = tokenize) 
     steps["tfidf"] = TfidfTransformer(norm='l1')
     
-    ranforest = RandomForestClassifier(n_estimators=50,
-                                       criterion='gini') #RandomForest
+    ranforest = RandomForestClassifier() #RandomForest
     clf = MultiOutputClassifier(ranforest, n_jobs = -1) #Make MultiOutput CLF
     steps["Classifier"] = clf #Add classifier to the end of the Pipeline
     steps = list(steps.items()) #Convert Steps to list
     
     pipeline = Pipeline(steps) #Make Pipeline 
+
+    #GridSearch
+    #I'll leave this commented since it takes a lot of time to find
+    #the best parameters
+    #params = {'Classifier__estimator__n_estimators': [100,200],
+    #          'Classifier__estimator__criterion': ['gini','entropy'],
+    #          'tfidf__norm': ['l1','l2']}
+    #
+    #pipeline = GridSearchCV(estimator = Pipeline, param_grid=params)
 
     return pipeline     
 
